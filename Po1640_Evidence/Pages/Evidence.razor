@@ -1,19 +1,19 @@
 ﻿<PageTitle>Evidence</PageTitle>
 <h1>Evidence</h1>
 <div class="p-2 my-3 border">
-    <label>Datum: <input type="date" /></label>
-    <label>Náklady: <input type="number" step="0.01" /></label>
-    <label>Výnosy: <input type="number" step="0.01" /></label>
-    <button>Přidat</button>
+    <label>Datum: <input type="date" @bind-value ="Evid.Polozka.Datum" /></label>
+    <label>Náklady: <input type="number" step="0.01" @bind-value="Evid.Polozka.Naklady" /></label>
+    <label>Výnosy: <input type="number" step="0.01" @bind-value="Evid.Polozka.Vynosy" /></label>
+    <button @onclick="Evid.PridatZaznam">Přidat</button>
 </div>
 <div class="p-2 my-3 border">
-    <button>Zobraz vše</button>
-    <button>Počet záznamů</button>
+    <button @onclick="Evid.ZobrazZaznamy">Zobraz vše</button>
+    <button @onclick="Evid.ZobrazPocetZaznamu">Počet záznamů</button>
     <button>Statistiky</button>
 </div>
 <div class="p-2 my-3 border">
-    <p></p>
+    <p>@((MarkupString)Evid.Vystup)</p>
 </div>
 @code {
-
+    private Models.Evidence Evid { get; set; } = new Models.Evidence();
 }
