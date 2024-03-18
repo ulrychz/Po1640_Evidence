@@ -1,19 +1,87 @@
-﻿<PageTitle>Evidence</PageTitle>
+﻿@inject IJSRuntime JS
+
+<PageTitle>Evidence</PageTitle>
 <h1>Evidence</h1>
 <div class="p-2 my-3 border">
     <label>Datum: <input type="date" @bind-value ="Evid.Polozka.Datum" /></label>
     <label>Náklady: <input type="number" step="0.01" @bind-value="Evid.Polozka.Naklady" /></label>
     <label>Výnosy: <input type="number" step="0.01" @bind-value="Evid.Polozka.Vynosy" /></label>
-    <button @onclick="Evid.PridatZaznam">Přidat</button>
+    @if (Evid.IsEditace)
+    {
+        <button @onclick="Evid.UkonciEditaci">Ukonči editaci</button>
+    }
+    else
+    {
+       <button @onclick="Evid.PridatZaznam">Přidat</button>
+    }
 </div>
 <div class="p-2 my-3 border">
     <button @onclick="Evid.ZobrazZaznamy">Zobraz vše</button>
     <button @onclick="Evid.ZobrazPocetZaznamu">Počet záznamů</button>
-    <button>Statistiky</button>
+    <button @onclick="Evid.Statistiky">Statistiky</button>
 </div>
 <div class="p-2 my-3 border">
     <p>@((MarkupString)Evid.Vystup)</p>
 </div>
+
+@if (!Evid.Polozky.Any())
+{
+    <p><em>Nejsou zatím žádné záznamy</em> </p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Náklady</th>
+                <th>Výnosy</th>
+                <th>Zisk</th>
+                <th>Smazat</th>
+                <th>Edituj</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Evid.Polozky)
+            {
+                <tr class="@GetCssClassRT(item)">
+                    <td>@item.Datum</td>
+                    <td>@item.Naklady.ToString("C2")</td>
+                    <td>@item.Vynosy.ToString("C2")</td>
+                    <td>@item.Zisk.ToString("C2")</td>
+                    <td>
+                        <button class="text-danger" @onclick="()=> Evid.SmazatZaznam(item)" >&times;</button>
+                    </td>
+                    <td>
+                        <button class="text-info" @onclick="()=> Evid.Editace(item)">&plusmn;</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
-    private Models.Evidence Evid { get; set; } = new Models.Evidence();
+
+    protected override void OnInitialized()
+    {
+        Evid = new Models.Evidence(JS);
+    }
+
+    private Models.Evidence Evid { get; set; }
+
+    private string GetCssClassRT(Models.Polozka item)
+    {
+        return item == Evid.Polozka ? "table-primary" : "";
+    }
+
+    // private async Task SmazatZaznam(Models.Polozka item)
+    // {
+    //     var zprava = $"Chcete smazat {item.Datum} - Zisk: {item.Zisk} z vašeho seznamu?";
+    //     //JS.InvokeVoidAsync("alert", zprava);
+    //     if (await JS.InvokeAsync<bool>("confirm", zprava))
+    //     {
+    //         Evid.Polozky.Remove(item);
+    //     }
+    // }
 }
